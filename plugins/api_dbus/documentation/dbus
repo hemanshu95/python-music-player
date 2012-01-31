@@ -1,0 +1,61 @@
+There is a daemon and there can be one or multiple clients.
+Communication from/to the daemon is done over DBus.
+
+
+This is an first attempt to document this (and make sure that there is
+  some logic here).
+  
+General idea is that data from and to the daemon is send serialized in JSON.
+Downside is that all incomming data has to be checked!
+Upside is that clients can be written in any language you like.
+
+________
+Formats:
+	<collections in JSONFormat>
+		TODO!
+
+
+	<listtype>
+		String of one of the following:
+		["filelist"]
+
+	<tracks in JSONFormat>:
+		list [] of data-dictionaries:
+		  {'filename': '', 'title': '', }
+		These data-dictionaires are serialized Collection.Track objects.
+
+
+_______________________
+Controlling the Daemon:
+
+
+Collections ('org.pymp.daemon.collections'):
+  Class: CollectionManager
+  	+ getCollection(id)
+  		Returns all tracks in collection <id> in <tracks in JSONFormat>:
+  		
+  	+ getCollections (TODO: )
+  		Returns a dictonary of <collections in JSONFormat>,
+  		including an ID for each collection:
+  		{ <id>: collectiondata }
+  		
+  
+MusicPlayer ('org.pymp.daemon.player'):
+  Class Player:
+	+ play()
+	
+	+ pause()
+	
+	+ stop()
+	
+	+ playTrack(id)
+  	
+  	
+  	+ addTracks(<tracks in JSONFormat>)
+		Adds tracks to the playlist
+		TODO: Exception when playlist does not accept tracks,
+		 (in case of an internetradio stream)
+
+	+ initialize_new_list(<listtype>)
+		Sets the player with a new playlist type
+		
