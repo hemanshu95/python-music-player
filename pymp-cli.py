@@ -4,7 +4,7 @@ import sys
 import dbus
 import simplejson
 import dataobjects
-
+import pprint
 
 
 #get the commandline arguments
@@ -53,6 +53,31 @@ if args[0] == "tune":
         play_meth = service_player('play')
         play_meth()
 
+        
+#Lists
+if args[0] == "lists":
+    if not len(args) > 1:
+        #print a list of all collections
+        lists = simplejson.loads(str(service_lists('getLists')()))
+        
+        print "Currently the following lists are available:"
+        for playlist in lists:
+            print "  * "+ playlist['name']
+        print ""
+        
+    else:
+        listname = args[1]
+        getTracks = service_lists('getTracks')
+        
+        ##TODO: None, None seems not allowed with dbus... 0 999 hack instead.
+        tracks = simplejson.loads(str(getTracks(listname, 0, 999)))
+        
+        for track in tracks:
+            print track[1]['title'] + " by " + track[1]['artist']
+        
+        
+        
+        
 
 if args[0] == "player":
     if args[1] == "play":
