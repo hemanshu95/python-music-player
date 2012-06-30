@@ -1,5 +1,7 @@
 
 import MusicList
+import pprint
+
 
 class ListManager():
     def __init__(self):
@@ -21,8 +23,17 @@ class ListManager():
     
     def registerNewListType(self, key, theClass):
         '''Register a new type of playlist.
-        Note that all supported type of playlists should be calling this method only once!'''
+        Note that all supported type of playlists should be calling this method
+        only once!'''
         self._listTypes[key] = theClass
+    
+    
+    def getListTypes(self):
+        '''Retruns the keys for available listtypes'''
+        types = []
+        for key in self._listTypes:
+            types.append(key)
+        return types
     
     
     def deregisterNewListType(self, key):

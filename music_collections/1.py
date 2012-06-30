@@ -61,8 +61,10 @@ class Album:
             
         return highest
 
-class Track:
+class CollecionTrack:
     def __init__(self, filename):
+        print "USE OF DEPRECATED COLLECTIONTRACK"
+        
         self.filename = filename
         
         self.artist = None
@@ -136,7 +138,7 @@ class CollectionParser:
     
     
     def addTrack(self, filename):
-        trackdata = Track(filename)
+        trackdata = CollecionTrack(filename)
         if self.artistscollection.getArtist(trackdata.artist) == None:
             self.artistscollection.addArtist(Artist(trackdata.artist))
         artist = self.artistscollection.getArtist(trackdata.artist)

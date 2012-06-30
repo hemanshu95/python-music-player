@@ -64,6 +64,7 @@ class LastFMList(MusicList):
         
         #TODO: Make sure that the given track is still valid
         # i.e. we are still allowed to download it, given its validty timestamp
+        #  -> speed boost
         
         #Make sure we add tracks to the last-fm queue in time
         if len(self._lastfmqueue) < 2:

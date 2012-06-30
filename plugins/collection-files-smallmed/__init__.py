@@ -1,11 +1,9 @@
 
 import os
 
-import mutagen
 import simplejson
 
 from dateutil import parser as dateparser
-from mutagen.easyid3 import EasyID3
 from dataobjects import Track, Artist, Album
 
 from music_collections.MusicCollection import FullMemoryCollection
@@ -89,41 +87,13 @@ class SmallMediumFileCollection(FullMemoryCollection):
 
             for mfile in files:
                 if mfile.split(".")[-1] in extentions:
-                    try:
-                        filename = path+"/"+mfile
-                        #audiodata = EasyID3(path+"/"+mfile)
-                        audiodata = mutagen.File(filename, easy=True)
-                        
-                    except:
-                        print "Could not open file for EasyID3"
-                        break
-                    
-                    t = Track("file://"+path+"/"+mfile)
-                    
-                    if "title" in audiodata:        t.title = audiodata["title"][0]
-                    if "artist" in audiodata:       t.artist = audiodata["artist"][0]
-                    if "album" in audiodata:        t.album = audiodata["album"][0]
-                    if "date" in audiodata:
-                        try:
-                            dt = dateparser.parse(audiodata["date"][0])
-                            t.year = dt.year
-                        except:
-                            t.year = audiodata["date"][0]
-                    
-                    if "tracknumber" in audiodata: 
-                        import re
-                        t.tracknumber = int(re.findall(r'\d+', audiodata["tracknumber"][0])[0])
-
-                    t.length = audiodata.info.length
-
-
+                    filename = path+"/"+mfile
+                    try: t = Track.loadfromfile(filename)
+                    except: print "Could not open file for ID3"
                     found_tracks.append(t)
         
         self._tracks = found_tracks
         self.writetofile()
         self.sortTracks()
         return
-    
-
-
     

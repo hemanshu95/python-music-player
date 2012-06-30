@@ -1,3 +1,6 @@
+import re
+import mutagen
+from mutagen.easyid3 import EasyID3
 
 class Artist():
     def __init__(self, name):
@@ -49,10 +52,12 @@ class Track():
         
 
     def serialize(self):
-        return {'uri': self.uri, 'title': self.title, 'artist': self.artist, 'album': self.album, 'year': self.year, 'track': self.tracknumber, 'length': self.length}
+        return {'uri': self.uri, 'title': self.title, 'artist': self.artist,
+                'album': self.album, 'year': self.year, 'track': self.tracknumber,
+                'length': self.length}
     
     
-    def load(self, data):
+    def _load_deserialize(self, data):
         self.uri = data['uri']
 
         self.artist = data['artist']
@@ -62,9 +67,41 @@ class Track():
         self.tracknumber = data['track']
         self.length = data['length']
         
+        
+    '''Returns a new Track object based from the information 
+    in a serialized form.'''
     @staticmethod
-    def fromData(data):
-        x = Track()
-        x.load(data)
-        return x
+    def deserialize(data):
+        newTrack = Track()
+        newTrack._load_deserialize(data)
+        return newTrack
     
+    
+    '''Loads a new Track object based on the contents of an (audio) file.'''
+    @staticmethod
+    def loadFromFile(filename):
+        try:    
+            audiodata = mutagen.File(filename, easy=True)                        
+        except:
+            raise Exception("Could not open file for EasyID3")
+
+                    
+        t = Track("file://"+filename)
+        
+        if "title" in audiodata:  t.title = audiodata["title"][0]
+        if "artist" in audiodata: t.artist = audiodata["artist"][0]
+        if "album" in audiodata:  t.album = audiodata["album"][0]
+        if "date" in audiodata:
+            try:
+                dt = dateparser.parse(audiodata["date"][0])
+                t.year = dt.year
+            except:
+                t.year = audiodata["date"][0]
+                    
+        if "tracknumber" in audiodata: 
+            t.tracknumber = int(re.findall(r'\d+', audiodata["tracknumber"][0])[0])
+            
+        t.length = audiodata.info.length
+
+        return t
+        

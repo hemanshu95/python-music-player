@@ -42,6 +42,13 @@ class API_Lists(DBusService):
 
         return
 
+        
+    '''Returns a list of all available list types'''
+    @dbus.service.method('org.pymp.daemon.lists')
+    def getListTypes(self):
+        return simplejson.dumps(self._listsmanager.getListTypes())
+        
+        
 
     @dbus.service.method('org.pymp.daemon.lists')
     def getLists(self):
@@ -64,11 +71,17 @@ class API_Lists(DBusService):
             
         return simplejson.dumps(tracks)
 
+    @dbus.service.method('org.pymp.daemon.lists')
+    def addFileAsTrack(self, list_id, filename):
+        list_id = unicode(list_id)
+        tracklist = self._listsmanager.get_list(list_id)
+        tracklist.addTrack(dataobjects.Track.loadFromFile(filename))
 
+        
+        
     @dbus.service.method('org.pymp.daemon.lists')
     def addTracks(self, list_id, tracks_as_json):
         list_id = unicode(list_id)
-        
         tracklist = self._listsmanager.get_list(list_id)
                
         tracks = simplejson.loads(tracks_as_json)

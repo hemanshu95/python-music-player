@@ -7,6 +7,16 @@ from plugins import Plugin
 
 info = {'class': "LibNotify"}
 
+
+
+"""
+  This module may be improved by removing some dependencies or implementing
+  a fallback.
+  Some ideas:
+    https://wiki.archlinux.org/index.php/Libnotify#Bash
+    https://wiki.archlinux.org/index.php/Libnotify#Python
+"""
+
 class LibNotify(Plugin):    
     
     def setup(self):

@@ -53,6 +53,24 @@ if args[0] == "tune":
         play_meth = service_player('play')
         play_meth()
 
+
+if args[0] == "newlist":
+    if not len(args) > 2:
+        #Print all available list types
+        print "Create a new list with: newlist <listtype> <name>"
+        print ""
+        print "Availble list types:"
+        
+        listtypes = service_lists('getListTypes')()
+        for ltype in simplejson.loads(str(listtypes)):
+            print " * "+ltype
+        
+    else:
+        listtype = args[1]
+        listname = args[2]
+        
+        service_lists('newList')(listtype, listname)
+
         
 #Lists
 if args[0] == "lists":
@@ -68,13 +86,25 @@ if args[0] == "lists":
     else:
         listname = args[1]
         getTracks = service_lists('getTracks')
+
+        action = "tracks"
+        if len(args) > 2:
+            action = args[2]
         
-        ##TODO: None, None seems not allowed with dbus... 0 999 hack instead.
-        tracks = simplejson.loads(str(getTracks(listname, 0, 999)))
+        if action == "tracks":
+            ##TODO: None, None seems not allowed with dbus... 0 999 hack instead.
+            tracks = simplejson.loads(str(getTracks(listname, 0, 999)))
         
-        for track in tracks:
-            print track[1]['title'] + " by " + track[1]['artist']
-        
+            for track in tracks:
+                print track[1]['title'] + " by " + track[1]['artist']
+                
+        elif action == "addtrack":
+            if not len(args) > 3:
+                print "usage: lists <listname> addtrack <filename>"
+            else:
+                track = args[3]
+                print "ADDING TRACK: "+track
+                service_lists('addFileAsTrack')(listname, track)
         
         
         
@@ -95,5 +125,8 @@ if args[0] == "player":
     elif args[1] == "prev":
         method = service_player('prevTrack')
         method()
-        
+   
+    elif args[1] == "setlist":
+        method = service_player('set_list')
+        method(args[2])
         
