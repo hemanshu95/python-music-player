@@ -32,7 +32,8 @@ class APIDbus(Plugin):
     
     def start(self):
         listmanager = self.listManager
-        listplayer = self.listPlayer
+        queueplayer = self.queueplayer
+        queue = self.queue
         collectionsmanager = self.collectionManager
         
         # initialize dbus
@@ -40,13 +41,13 @@ class APIDbus(Plugin):
         bus_name = dbus.service.BusName('org.pymp.daemon', bus=dbus.SessionBus())
  
         # Load the API classes       
-        player = API_Player(listmanager, listplayer)
+        player = API_Player(listmanager, queueplayer, queue)
         player.dbus_start(bus_name)
 
         lists = API_Lists(listmanager)
         lists.dbus_start(bus_name)
 
-        lazylists = API_LazyList(listmanager, listplayer)
+        lazylists = API_LazyList(listmanager, queueplayer)
         lazylists.dbus_start(bus_name)
         
         collections = API_Collections(collectionsmanager)
@@ -55,3 +56,4 @@ class APIDbus(Plugin):
 
     def stop(self):
         pass
+    

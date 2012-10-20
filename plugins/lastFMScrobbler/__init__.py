@@ -46,7 +46,7 @@ class LastFMScrobbler(Plugin):
     
     def lastfmnewsong(self):
         """Notifies last.fm that the user is now listening... to another track."""        
-        current_track = self.listPlayer.getCurrentTrack()
+        current_track = self.queueplayer.getCurrentTrack()
         self._nowplaying = current_track
         try:
             self._scrobbler.informplaying(current_track)

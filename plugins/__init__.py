@@ -1,7 +1,8 @@
 class Plugin():
-    def __init__(self, listPlayer=None, listManager=None, collectionManager=None):
+    def __init__(self, queueplayer=None, queue=None, listManager=None, collectionManager=None):
         self.listManager = listManager
-        self.listPlayer = listPlayer
+        self.queueplayer = queueplayer
+        self.queue = queue
         self.collectionManager = collectionManager
         self.setup()
         

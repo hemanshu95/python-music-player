@@ -1,6 +1,7 @@
 import gtk
 
-import player.ListPlayer
+import player.QueuePlayer
+from player.queue import TrackQueue as PympQueue
 import music_lists
 import music_collections
 
@@ -18,18 +19,16 @@ class PympDaemon():
         
         #Initialize the required objects
         list_manager = music_lists.ListManager()
-        list_player = player.ListPlayer.ListPlayer()
+        queue = PympQueue()
+        queue_player = player.QueuePlayer.QueuePlayer(queue)
         collections_manager = music_collections.CollectionManager()
-        
-        #Load/enable the API
-        #daemon_api.API(list_manager, list_player, collections_manager)
         
         #Loading plugins. Note plugins are located in the plugins-dir, which 
         #  can be found two levels higher than this file. TODO: Renice this,
         #  getting this dir somewhere else instead of finding it out ourselves.
         pluginpath = os.path.dirname(os.path.dirname(unicode(inspect.getfile( inspect.currentframe() ) ) )) + "/plugins"
-        plugin_manager = PluginManager( pluginpath , list_player)
-        plugin_manager.loadAll(listPlayer=list_player, listManager=list_manager, collectionManager=collections_manager)
+        plugin_manager = PluginManager(pluginpath, queue_player)
+        plugin_manager.loadAll(queueplayer=queue_player, queue=queue, listManager=list_manager, collectionManager=collections_manager)
                 
         #start all plugins
         for plugin in plugin_manager.getPlugins():
@@ -43,16 +42,12 @@ class PympDaemon():
 
 
 
-
-
-
-
 class PluginManager:
     
-    def __init__(self, folder, listPlayer):
+    def __init__(self, folder, queueplayer):
         self._folder = folder
         self._plugins =  {}
-        self.listPlayer = listPlayer
+        self.queueplayer = queueplayer
 
     
     def loadAll(self, **kwargs):

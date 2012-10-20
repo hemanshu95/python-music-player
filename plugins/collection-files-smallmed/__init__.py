@@ -22,14 +22,14 @@ class CollectionFilesSmallMed(Plugin):
     def stop(self):
         self.collectionManager.deregisterCollectionType("FilesSmallMedium")
 
-"""
-First implemented class type. I am not sure yet if this is 'the way to go'.
-It reads an entire directory recursively. The result of the search is stored
-somewhere. When the list is loaded a second time, the data is quickly loaded
-from the list.
-"""
-class SmallMediumFileCollection(FullMemoryCollection):
 
+class SmallMediumFileCollection(FullMemoryCollection):
+    """
+    First implemented class type. I am not sure yet if this is 'the way to go'.
+    It reads an entire directory recursively. The result of the search is stored
+    somewhere. When the list is loaded a second time, the data is quickly loaded
+    from the list.
+    """
     def __init__(self, name, displayname, options):
         root = options['root']
         FullMemoryCollection.__init__(self, name, displayname, False)
@@ -69,7 +69,7 @@ class SmallMediumFileCollection(FullMemoryCollection):
             
     
     def loadfromfile(self):
-        try:
+        try: #If already scanned once before, use the scanned cache
             f = open(self._cachedir+self._name, 'r')
             self.load_tracks_as_json(f.read())
             f.close()
@@ -81,16 +81,17 @@ class SmallMediumFileCollection(FullMemoryCollection):
         print "Start scanning SmallMediumFileCollection "+self.collectionroot
         found_tracks = []
 
-        extentions = ["mp3"]
-
+        extentions = ["mp3", "flac"]
         for (path, dir, files) in os.walk(self.collectionroot):
-
             for mfile in files:
                 if mfile.split(".")[-1] in extentions:
                     filename = path+"/"+mfile
-                    try: t = Track.loadfromfile(filename)
-                    except: print "Could not open file for ID3"
-                    found_tracks.append(t)
+                    try:
+                        t = Track.loadFromFile(filename)
+                        found_tracks.append(t)
+                    except:
+                        print "Could not open file for ID3 %s" % filename
+                    
         
         self._tracks = found_tracks
         self.writetofile()

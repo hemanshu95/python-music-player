@@ -13,8 +13,6 @@ class CollectionManager():
     def __init__(self):
         self._collections = {}
         self._collectionTypes = {}
-        #self._load_collections()
-
 
 
     def registerNewCollectionType(self, key, theClass):
@@ -23,9 +21,9 @@ class CollectionManager():
     def deregisterCollectionType(self, key):
         raise NotImplemented()
     
-    
-
     def load_collections(self):
+        '''Call should be made after all playlist types are initialized.
+        Usually issued by the daemon.'''
         self._loadFromConfig()
         print "Collections loaded."
         
@@ -45,6 +43,9 @@ class CollectionManager():
     
     
     def _loadFromConfig(self):
+        '''Loads all collections from the configuration dir.
+        Config dir location is set in constants.py
+        '''
         configdir = constants.config_dir_collections
                 
         for filename in os.listdir(configdir):
@@ -68,17 +69,8 @@ class CollectionManager():
 
 
     def _loadCollection(self, name, displayname, collectiontype, options):
+        '''Load a collection of type collectiontype.'''
         if collectiontype not in self._collectionTypes:
             raise Exception("Unknown collection type: "+collectiontype) 
         
         self._collections[name] = self._collectionTypes[collectiontype](name, displayname, options)
-#        
-#        if collection_type != "FilesSmallMedium":
-#            raise Exception("Unknown collection type.")
-#        
-#        root = options['root']
-#        
-#        self._collections[name] = SmallMediumFileCollection(name, displayname, root)
-
-
-

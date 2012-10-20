@@ -130,3 +130,14 @@ if args[0] == "player":
         method = service_player('set_list')
         method(args[2])
         
+        
+if args[0] == "play":
+    track = args[1]
+    method = service_player('set_track')
+    method(track)
+
+    
+if args[0] == "queue":
+    track = args[1]
+    method = service_player('queue_track')
+    method(track)

@@ -134,7 +134,7 @@ class MusicPlayer(Observable):
     a track is almost finished, so other instances can prepare
     the next one.'''
     def _trackAlmostFinished(self):
-        #TODO: Move to ListPlayer signals.emit("player.trackalmostfinished")
+        #TODO: Move to QueuePlayer signals.emit("player.trackalmostfinished")
         self.notify(message=MusicPlayer.TRACKALMOSTFINISHED)
 
     

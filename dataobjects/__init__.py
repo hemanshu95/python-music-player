@@ -83,9 +83,8 @@ class Track():
         try:    
             audiodata = mutagen.File(filename, easy=True)                        
         except:
+            print "---- failure: %s"%filename
             raise Exception("Could not open file for EasyID3")
-
-                    
         t = Track("file://"+filename)
         
         if "title" in audiodata:  t.title = audiodata["title"][0]

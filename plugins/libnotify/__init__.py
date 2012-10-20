@@ -43,7 +43,7 @@ class LibNotify(Plugin):
             self._currentMessage.close()
 
     def notifyNewSong(self):
-        current_track = self.listPlayer.getCurrentTrack()
+        current_track = self.queueplayer.getCurrentTrack()
 
         self.hideCurrentMessage()
         self.showMessage("Now playing", current_track.title + " - " + current_track.artist)

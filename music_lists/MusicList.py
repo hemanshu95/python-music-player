@@ -18,13 +18,6 @@ class MusicList(Observable):
     def getName(self):
         return self._name
     
-    ##Deprecated,
-    #TODO: Create some sort of player-factory, and then add a method
-    ## getPlayerType(), so that ListPlayer (or other instances) can
-    ## create a player for themselves!
-    def getPlayer(self):
-        return MusicPlayer.GStreamerPlayer()
-    
     def getAllTracks(self):
         raise NotImplementedError
 
@@ -66,11 +59,6 @@ class MusicList(Observable):
 class FileList(MusicList):
     def __init__(self, name):
         MusicList.__init__(self, name)
-   
-        
-
-
-
         
 class StreamList(MusicList):
     def __init__(self, name):
