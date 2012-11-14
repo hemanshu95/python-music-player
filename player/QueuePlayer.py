@@ -1,7 +1,6 @@
 from patterns.Observable import Observable
 
 import MusicPlayer
-from music_lists.MusicList import MusicList
 from patterns import signals
 
 

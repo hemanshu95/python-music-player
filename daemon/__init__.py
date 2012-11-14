@@ -60,11 +60,12 @@ class PluginManager:
     def loadPlugin(self, name, **kwargs):
         # Try to import the module
         modulename = "plugins."+name
-        try:
-            __import__(modulename)
-        except Exception as e:
-            print "Plugin: Import "+name+ " failed: "+unicode(e)
-            return
+        __import__(modulename)
+        #try:
+        #    __import__(modulename)
+        #except Exception as e:
+        #    print "Plugin: Import "+name+ " failed: "+unicode(e)
+        #    return
         
         plugin = sys.modules[modulename]
         

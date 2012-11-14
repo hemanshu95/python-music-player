@@ -112,7 +112,7 @@ class LastFMScrobbler(Plugin):
                 
                 
             else:
-                track = Track.fromData(simplejson.loads(line))
+                track = Track.deserialize(simplejson.loads(line))
                 self.scrobble(track, timestamp)
                 timestamp = None
 

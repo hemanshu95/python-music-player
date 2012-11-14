@@ -1,6 +1,9 @@
 
 from Queue import Queue as pyQueue
 
+class NoTracksException(Exception):
+  pass
+
 class TrackQueue:
     '''
     Object that orchastrates the tracks to be played.

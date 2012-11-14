@@ -6,7 +6,6 @@ from patterns import signals
 
 import simplejson
 import dataobjects
-import music_lists.MusicList
 
 class API_Lists(DBusService):
     def __init__(self, listsmanager):

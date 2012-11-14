@@ -1,4 +1,3 @@
-from player import MusicPlayer
 from patterns.Observable import Observable
 
 from patterns.llist import LList
