@@ -69,18 +69,31 @@ class Track():
         self.length = data['length']
         
         
-    '''Returns a new Track object based from the information 
-    in a serialized form.'''
+
     @staticmethod
     def deserialize(data):
+        '''
+        Returns a new Track object based from the information 
+        in a serialized form.
+        '''
         newTrack = Track()
         newTrack._load_deserialize(data)
         return newTrack
     
     
-    '''Loads a new Track object based on the contents of an (audio) file.'''
+    @staticmethod
+    def loadFromUri(uri):
+        if uri[7] == "file://":
+            return Track.loadFromFile(uri[7:])
+        
+        raise Exception("Not supported!")
+    
+    
     @staticmethod
     def loadFromFile(filename):
+        '''
+        Loads a new Track object based on the contents of an (audio) file.
+        '''
         try:    
             audiodata = mutagen.File(filename, easy=True)                        
         except:

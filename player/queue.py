@@ -2,7 +2,7 @@
 from Queue import Queue as pyQueue
 
 class NoTracksException(Exception):
-  pass
+    pass
 
 class TrackQueue:
     '''

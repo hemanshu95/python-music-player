@@ -37,7 +37,7 @@ class API_Player(DBusService):
     
     @dbus.service.method('org.pymp.daemon.player')
     def pause(self):
-        self.player.pause() 
+        self.player.pause()
         
 
     @dbus.service.method('org.pymp.daemon.player')

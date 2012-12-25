@@ -2,13 +2,10 @@ from patterns.Observable import Observable
 
 import MusicPlayer
 from patterns import signals
-
+from states import PlayerStates
+from queue import NoTracksException
 
 class QueuePlayer(Observable):
-    
-    STATE_READY   = 0
-    STATE_PLAYING = 1
-    STATE_PAUSED  = 2
     
     def __init__(self, queue):
         Observable.__init__(self)
@@ -17,11 +14,11 @@ class QueuePlayer(Observable):
         self._musicplayer.attach(self)
         
         self.queue = queue
-        self.currentTrack = None
-        self._track_in_musicplayer = None
-        self.state = QueuePlayer.STATE_READY
+        self._currentTrack = None
         
-        print "Creating a new QueuePlayer object"
+        self.state = PlayerStates.STOPPED
+        
+        print("Creating a new QueuePlayer object")
         
     
     def getQueue(self):
@@ -29,36 +26,35 @@ class QueuePlayer(Observable):
         return self.queue
 
 
-    def changeTrack(self, track):
+    def setTrackFromQueue(self):
         '''
-        Change the current playing track. This will immedeatly
-        stop the current running track.
+        Sets the current track from the top track of the queue.
         '''
-        print("~~~~~~~~")
-        self.currentTrack = track
-        
-        #TODO: Handle correctly when on pause state
-        if self.currentTrack != None:
-            self.play()
-        else:
-            print("! There are no new tracks in the queue to play!")
-            raise Exception("No new tracks!")
-    
-    
+        self._currentTrack = self.queue.popTrack()
+
+
     def play(self):
         '''
         Start playing the currentTrack from the beginning of the song.
+        If the player is already playing, calling this effect will have no effect.
         '''
-        if self.currentTrack == None:
-            try: return self.nextTrack()
-            except: raise
+        if self.state == PlayerStates.PLAYING:
+            return
         
-        self.state = QueuePlayer.STATE_PLAYING
-        if self.state == QueuePlayer.STATE_PAUSED:
+        if self._currentTrack == None:
+            try:
+                self.setTrackFromQueue()
+            except:
+                return
+        
+        if self.state == PlayerStates.PAUSED:
             self._musicplayer.resume()
         else:
-            self._musicplayer.play(self.currentTrack)
+            print(">>>>")
+            self._musicplayer.play(self._currentTrack)
             signals.emit("player.play")
+
+        self.state = PlayerStates.PLAYING
         
     
     def pause(self):
@@ -66,21 +62,48 @@ class QueuePlayer(Observable):
         Pauses the current track playback.
         Playback can be resumed by calling .play()
         '''
-        self.state = QueuePlayer.STATE_PAUSED
+        self.state = PlayerStates.PAUSED
         self._musicplayer.pause()
+        
+        
+    def playpause(self):
+        '''
+        If playback is paused, resume playback, otherwise start playback.
+        '''
+        if self.state == PlayerStates.PLAYING:
+            self.pause()
+        else:
+            self.play()
     
     
     def stop(self):
         '''
         Stops the playback of the queue.
         '''
-        QueuePlayer.STATE_READY
+        self.state = PlayerStates.STOPPED
         self._musicplayer.stop()
+
+
+    def getState(self):
+        '''
+        Returns the current player state, which can be one of 
+        QueuePlayerStates.
+        '''
+        return self.state
 
     
     def nextTrack(self):
-        '''Iff possible, start the following track in the list.'''
-        self.changeTrack(self.queue.popTrack())
+        '''
+        Iff possible, start the following track in the list.
+        If not possible, playback is ended.
+        '''
+        try:
+            self.setTrackFromQueue()
+            self.stop()
+            self.play()
+        except NoTracksException as _:
+            print("No new track to play: stopping playback.")
+            self.stop()
         
 
     def prevTrack(self):
@@ -91,7 +114,7 @@ class QueuePlayer(Observable):
     
     def getCurrentTrack(self):
         '''Returns the track currently playing.'''
-        return self.currentTrack
+        return self._currentTrack
     
     
     def _changedTrack(self):
@@ -116,6 +139,7 @@ class QueuePlayer(Observable):
                     self.stop()
                     
             elif message == MusicPlayer.MusicPlayer.TRACKALMOSTFINISHED:
-                print "  Track almost finished"
+                #print "  Track almost finished"
                 pass
+            
             

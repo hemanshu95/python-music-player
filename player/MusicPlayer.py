@@ -16,6 +16,7 @@ class Playbin2:
     '''  
     def __init__(self, musicplayer):
         self.idle = True # not playing at the moment
+        self.paused = False
         
         #Store the musicplayer element, so we can inform
         # it later when certain events occur.
@@ -44,9 +45,10 @@ class Playbin2:
             print >> sys.stderr, "Error: {0} {1}".format(err, debug)
             self.player.set_state(gst.STATE_NULL)
             self.idle = True
+            self.paused = False
         
             
-        if self.idle == True:
+        if self.idle == True and self.paused == False:
             self._musicplayer._trackfinished()
             
         return self.idle
@@ -58,26 +60,32 @@ class Playbin2:
 
     def play(self, stream):
         # abort previous play if still busy
+        self.paused = False
+
         if not self.idle:
             print >> sys.stderr, 'audio truncated'
             self.player.set_state(gst.STATE_NULL)
+            
+
         self.player.set_property("uri", stream)
         self.player.set_state(gst.STATE_PLAYING)
         self.idle = False # now playing
     
-    
     def resume(self):
         self.player.set_state(gst.STATE_PLAYING)
+        self.paused = False
     
     
     def pause(self):
         self.player.set_state(gst.STATE_PAUSED)
         self.idle = True
+        self.paused = True
         
         
     def stop(self):
         self.player.set_state(gst.STATE_NULL)
         self.idle = True
+        self.paused = False
 
 
 
@@ -123,10 +131,13 @@ class MusicPlayer(Observable):
         return False
     
     
-    '''Should be called when a MusicPlayer has finished playing
+    '''
+    Should be called when a MusicPlayer has finished playing
     the current track. It will notify any observer, so they can undertake
-    some action, such as starting a new track.'''
+    some action, such as starting a new track.
+    '''
     def _trackfinished(self):
+        print("TRACK FINISHED")
         self.notify(message=MusicPlayer.TRACKFINISHED)
     
     

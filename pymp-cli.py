@@ -130,6 +130,10 @@ if args[0] == "player":
         method = service_player('set_list')
         method(args[2])
         
+    elif args[1] == "pause":
+        method = service_player('pause')
+        method()
+        
         
 if args[0] == "play":
     track = args[1]
@@ -138,6 +142,10 @@ if args[0] == "play":
 
     
 if args[0] == "queue":
-    track = args[1]
     method = service_player('queue_track')
-    method(track)
+    for track in args[1:]:
+        method(track)
+    
+    method = service_player('play')
+    method()
+    
